@@ -2,10 +2,14 @@ import { getCurrentTab } from "./utils.js";
 
 document.getElementById('checkButton').addEventListener('click', async () => {
     // Set up a message listener before executing the content script
-    document.getElementById('responseContent').textContent = "you clicked";
+    document.getElementById('responseContent').textContent = "Analyzing...";
     chrome.runtime.onMessage.addListener(function(message) {
       if (message.action === 'sendContent') {
-        document.getElementById('responseContent').textContent = message.content;
+        if (message.content == 1) {
+            document.getElementById('responseContent').textContent = "Beware, that's a clickbait!"
+        } else {
+            document.getElementById('responseContent').textContent = "You are good to go!"
+        }
       }
     });
     const activeTab = await getCurrentTab();
