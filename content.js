@@ -3,7 +3,7 @@ function sendHtmlContent() {
     const sourceUrl = window.location.href;
     const htmlContent = document.documentElement.outerHTML;
   
-    const endpointUrl = 'https://clickguard.eu.pythonanywhere.com/predict'; 
+    const endpointUrl = 'https://clickguard.eu.pythonanywhere.com/extract_and_predict'; 
   
     fetch(endpointUrl, {
       method: 'POST',
@@ -12,16 +12,14 @@ function sendHtmlContent() {
       },
       body: JSON.stringify({
         url: sourceUrl,
-        content: htmlContent
+        html: htmlContent
       })
     })
     .then(response => response.json())
     .then(data => {
-      console.error('data:', data.content)
-      chrome.runtime.sendMessage({ action: 'sendContent', content: data.content });
+      chrome.runtime.sendMessage({ action: 'sendContent', content: data.prediction });
     })
     .catch(error => {
-      console.error('Error:', error);
       chrome.runtime.sendMessage({ action: 'sendContent', content: 'An error occurred' });
     });
   }
