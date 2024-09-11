@@ -4,7 +4,8 @@ function sendHtmlContent() {
     const htmlContent = document.documentElement.outerHTML;
   
     const endpointUrl = 'https://clickguard.eu.pythonanywhere.com/extract_and_predict'; 
-  
+    // const endpointUrl = 'http://127.0.0.1:5000/extract_and_predict'; 
+    
     fetch(endpointUrl, {
       method: 'POST',
       headers: {
