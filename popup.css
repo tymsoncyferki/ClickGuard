@@ -1,13 +1,15 @@
 body { 
     width: 300px;
     padding: 15px;
-    border: solid #333 1px;
-    border-radius: 8px;
-    background-color: #fffbea;}
+    background-color: #fffbea;
+}
 
-  h2 {text-align: center; color: #333;}
+h2 {
+    text-align: center;
+    color: #333;
+}
 
-  #checkButton {
+#checkButton {
     background-color: #ffdd57;
     border: none;
     color: #333;
@@ -16,15 +18,15 @@ body {
     margin-top: 10px;
     border-radius: 5px;
     width: 80%;
-  }
+}
 
-  #checkButton:hover {
+#checkButton:hover {
     background-color: #f1c40f;
-  }
+}
 
-  #responseContent {
+#responseContent {
     padding-top: 15px;
     color: #333;
     text-align: center;
     font-size: 0.95rem;
-  }
+}
