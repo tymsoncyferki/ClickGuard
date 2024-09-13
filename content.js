@@ -1,5 +1,9 @@
-// Function to send HTML content and receive response
-function sendHtmlContent() {
+// backend functionality
+
+/**
+ * makes a request with HTML content to python ML API, then sends a chrome runtime message with prediction
+ */
+function sendPredictionRequest() {
     const sourceUrl = window.location.href;
     const htmlContent = document.documentElement.outerHTML;
   
@@ -25,5 +29,5 @@ function sendHtmlContent() {
     });
   }
   
-sendHtmlContent();
+sendPredictionRequest();
   

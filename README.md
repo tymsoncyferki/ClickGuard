@@ -1,3 +1,3 @@
 # ClickGuard
 
-Chrome extenstion for clickbait recognition, under development.
+Chrome extension for clickbait recognition in articles, under development.

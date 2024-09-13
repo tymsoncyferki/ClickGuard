@@ -1,3 +1,5 @@
+// code for interacting with popup
+
 import { getCurrentTab } from "./utils.js";
 
 document.getElementById('checkButton').addEventListener('click', async () => {
