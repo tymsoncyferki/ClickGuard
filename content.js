@@ -25,8 +25,7 @@ function sendPredictionRequest() {
       chrome.runtime.sendMessage({ action: 'sendContent', content: data.prediction });
 
       chrome.storage.local.set({[sourceUrl]: data.prediction});
-      console.log("Value is set for", sourceUrl);
-      chrome.storage.local.get([sourceUrl]).then((result) => {console.log('value' + result[sourceUrl])});
+      console.log("Value", data.prediction, "is set for", sourceUrl);
     })
     .catch(error => {
       chrome.runtime.sendMessage({ action: 'sendContent', content: 'An error occurred' });
