@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clickguard options</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="options.css" rel="stylesheet">
+</head>
+<body>
+    <h1>ClickGuard Settings</h1>
+    <br>
+    <div class="container-sm">
+        <!-- PRE CLICK DETECTION -->
+        <div class="row">
+            <div class="col"><h3>Pre-click detection</h3></div>
+        </div>
+        <!-- search engines section -->
+        <div class="row">
+            <div class="col">
+                <b>Search engine detection</b><br>
+                Automatically checks for clickbaits on search engines result pages.
+                Currently only <i>Google</i> is supported.
+            </div>
+            <div class="col-2" style="text-align: right;">
+                <label class="switch" style="display: inline-block;">
+                    <input type="checkbox" id="searchEngineDetection" name="preDetection">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+        <!-- news outlets section -->
+        <div class="row">
+            <div class="col">
+                <b>News portal detection</b><br>
+                Automatically checks for clickbaits on news portals main pages.
+                Currently only <i>The Sun</i> is supported.
+            </div>
+            <div class="col-2" style="text-align: right;">
+                <label class="switch" style="display: inline-block;">
+                    <input type="checkbox" id="newsPortalDetection" name="preDetection">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+        <!-- POST CLICK DETECTION -->
+        <div class="row">
+            <div class="col"><h3>Post-click detection</h3></div>
+        </div>
+        <!-- manual option -->
+        <div class="row">
+            <div class="col">
+                <b>Manual-Only Detection</b><br>
+                To check if an article contains a clickbait title,
+                click on the extension icon and then "Check" button in the popup.
+            </div>
+            <div class="col-2" style="text-align: right;">
+                <label style="display: inline-block;">
+                    <input style="width: 30px; height: 30px;" type="radio" name="postDetection"
+                        id="manualDetection" value="manual">
+                </label>
+            </div>
+        </div>
+        <!-- monitored option -->
+        <div class="row">
+            <div class="col">
+                <b>Monitored Detection</b><br>
+                Automatically checks for clickbaits on monitored URLs.
+            </div>
+            <div class="col-2" style="text-align: right;">
+                <label style="display: inline-block;">
+                    <input style="width: 30px; height: 30px;" type="radio" name="postDetection"
+                    id="monitoredDetection" value="monitored">
+                </label>
+            </div>
+        </div>
+        <!-- semiAutomatic option -->
+        <div class="row">
+            <div class="col">
+                <b>Semi-Automatic Detection</b> (recommended)<br>
+                Automatically checks for clickbaits on monitored URLs and on pages containing relevant meta tags.
+            </div>
+            <div class="col-2" style="text-align: right;">
+                <label style="display: inline-block;">
+                    <input style="width: 30px; height: 30px;" type="radio" name="postDetection"
+                    id="semiAutomaticDetection" value="semiAutomatic">
+                </label>
+            </div>
+        </div>
+        <!-- automatic option -->
+        <div class="row">
+            <div class="col">
+                <b>Automatic Detection</b><br>
+                Automatically checks for clickbaits on every page. May slow down the browser.
+            </div>
+            <div class="col-2" style="text-align: right;">
+                <label style="display: inline-block;">
+                    <input style="width: 30px; height: 30px;" type="radio" name="postDetection"
+                    id="automaticDetection" value="automatic">
+                </label>
+            </div>
+        </div>
+        <!-- save button -->
+        <div style="text-align: center;">
+            <button id="saveButton" type="button" class="btn">Save</button>
+            <div id="status"></div>
+        </div>
+        <br>
+        <!-- <div class="row">
+            <div class="col" style="padding-top: 10px; box-shadow: -12px -24px 2px -24px black;">
+                <b>Spoiler generation</b><br>
+                Shows article spoiler in the popup. Slows down clickbait alerts.
+            </div>
+            <div class="col-2" style="padding-top: 10px; text-align: right;">
+                <label class="switch" style="display: inline-block;">
+                    <input type="checkbox" id="spoilerGeneration" name="spoilerGeneration">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div> -->
+        <div class="row">
+            <div class="col">
+                <b>Spoiler generation</b><br>
+                Shows article spoiler in the popup, only for articles classified as clickbait. Slows down clickbait alerts.
+            </div>
+            <div class="col-2" style="padding-top: 10px; text-align: right;">
+                <label class="switch" style="display: inline-block;">
+                    <input type="checkbox" id="spoilerGeneration" name="spoilerGeneration">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+        <!-- monitored sites section -->
+        <div class="row" style="padding-bottom: 0px;">
+            <div class="col"><h3>Monitored sites</h3></div>
+        </div>
+        <div class="row" style="padding-top: 0px;">
+            <div class="col">List with monitored sites for post-click detection. Use asterisk '*' as a placeholder for matching any characters. </div>
+        </div>
+        <div class="row">
+            <form style="display: flex;">
+                <input id="monitoredSitesInput" type="text" class="form-control" placeholder="www.example.com/news/*/*">
+                <button id="addButton" type="button" class="btn btn-primary">Add URL</button>
+            </form>
+            <!-- div for testing -->
+            <div>
+                <ul id="monitoredSitesList" class="table list">
+                    <!-- <li class="monitoredUrl">*sportowefakty.wp.pl/pilka-nozna/*/*<button class="deleteButton btn">x</button></li> -->
+                </ul>
+            </div>
+        </div>
+        <!-- proxy URL section -->
+        <div class="row" style="padding-bottom: 0px;">
+            <div class="col"><h3>API server</h3></div>
+        </div>
+        <div class="row" style="padding-top: 0px; padding-bottom: 0px">
+            <div class="col">URL of the API server. Click the <i><b>Health check</b></i> button to test availability or to wake up the server.</div>
+        </div>
+        <div class="row">
+            <form style="display: flex;">
+                <input id="proxyUrlInput" type="text" class="form-control" placeholder="https://example.com">
+                <button id="saveProxyUrlButton" type="button" class="btn btn-primary">Save</button>
+            </form>
+            <div id="proxyUrlStatus"></div>
+            <div style="display: flex; align-items: center; margin-top: 10px;">
+                <button id="healthCheckButton" type="button" class="btn btn-primary">Health check</button>
+                <div id="healthCheckResult" style="margin-left: 10px;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="../options.js"></script>
+</body>
+</html>
