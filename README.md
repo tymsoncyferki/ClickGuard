@@ -4,7 +4,7 @@
 
 Detecting articles with clickbait headlines.
 
-ClickGuard is a Chrome extension that detects clickbait titles before and after opening an article, shows clickbait probability with a short explanation and generates spoilers for clickbait articles. This repository contains the code and data for the CIKM 2026 demo paper *ClickGuard: A Plug-in for Clickbait Detection and Spoiling* (Urban, Kubita, Michaluk, Kuntur, Wróblewska). More details about the models and experiments can be found in our preprint [Click it or Leave it: Detecting and Spoiling Clickbait with Informativeness Measures and Large Language Models](https://arxiv.org/abs/2602.18171).
+ClickGuard is a Chrome extension that detects clickbait titles before and after opening an article, shows clickbait probability with a short explanation and generates spoilers for clickbait articles.
 
 Demo video: https://www.youtube.com/watch?v=ZoVK4trbrc4
 
@@ -24,7 +24,6 @@ Archived version of this repository (Zenodo): https://doi.org/10.5281/zenodo.237
 - [5. Tests and timings](#5-tests-and-timings)
 - [6. Data](#6-data)
 - [License](#license)
-- [Citation](#citation)
 
 ## Repository contents
 
@@ -330,18 +329,3 @@ Other files were created by us from the datasets above (merged and balanced data
 ## License
 
 The code is released under the MIT License, see [LICENSE](LICENSE).
-
-## Citation
-
-If you use ClickGuard in your work, please cite our paper:
-
-```
-@article{michaluk2026click,
-  title={Click it or Leave it: Detecting and Spoiling Clickbait with Informativeness Measures and Large Language Models},
-  author={Michaluk, Wojciech and Urban, Tymoteusz and Kubita, Mateusz and Kuntur, Soveatin and Wroblewska, Anna},
-  journal={arXiv preprint arXiv:2602.18171},
-  year={2026}
-}
-```
-
-To cite the code and data, use the Zenodo archive: https://doi.org/10.5281/zenodo.23765302
