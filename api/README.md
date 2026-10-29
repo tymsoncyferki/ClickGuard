@@ -3,7 +3,7 @@
 ### Running API
 In order to run the app:
 - install python > 3.11
-- specify OPEN_API_KEY in `.env` file
+- specify OPENAI_API_KEY in `.env` file
 - install requirements by running <br>
 `pip install -r requirements.txt`
 - to start the service run <br>

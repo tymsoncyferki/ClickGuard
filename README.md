@@ -2,17 +2,51 @@
 
 Detecting articles with clickbait headlines.
 
+ClickGuard is a Chrome extension that detects clickbait titles before and after opening an article, shows clickbait probability with a short explanation and generates spoilers for clickbait articles. This repository contains the code and data for the CIKM 2026 demo paper *ClickGuard: A Plug-in for Clickbait Detection and Spoiling* (Urban, Kubita, Michaluk, Kuntur, Wróblewska). More details about the models and experiments can be found in our preprint [Click it or Leave it: Detecting and Spoiling Clickbait with Informativeness Measures and Large Language Models](https://arxiv.org/abs/2602.18171).
+
+Demo video: https://www.youtube.com/watch?v=ZoVK4trbrc4
+
+- [Repository contents](#repository-contents)
+- [Requirements](#requirements)
 - [1. Installation manual](#1-installation-manual)
 - [2. User manual](#2-user-manual)
   - [2.1. Overview](#21-overview)
   - [2.2. Post-click detection](#22-post-click-detection)
   - [2.3. Pre-click detection](#23-pre-click-detection)
+- [3. Running the API locally](#3-running-the-api-locally)
+- [4. Reproducing the results](#4-reproducing-the-results)
+  - [4.1. Clickbait detection (Table 1)](#41-clickbait-detection-table-1)
+  - [4.2. Latency (Figure 3)](#42-latency-figure-3)
+  - [4.3. Other experiments](#43-other-experiments)
+- [5. Tests and timings](#5-tests-and-timings)
+- [6. Data](#6-data)
+- [License](#license)
+- [Citation](#citation)
+
+## Repository contents
+
+- `extension/` - source code of the Chrome extension (Manifest V3). This folder is loaded into the browser.
+- `api/` - backend service written in Flask. It extracts article content, runs the clickbait model and generates spoilers and explanations with OpenAI API. Contains the deployed model (`api/models/`), NLTK data and tests.
+- `notebooks/` - Jupyter notebooks with data preparation, EDA, informativeness measures and all detection and spoiling experiments.
+- `final_models/` - trained models produced by the notebooks (Random Forest and XGBoost on OpenAI embeddings and informativeness measures). The XGBoost model is the one deployed in the API.
+- `data/` - datasets used for training and evaluation, together with OpenAI and Gemini batch inputs and outputs. Short description of the files is in `data/REDME_DATA.md`.
+- `environments/` - conda environments and pip requirements used to run the notebooks.
+- `docs/images/` - screenshots used in this README.
+
+## Requirements
+
+- Chrome or other Chromium-based browser.
+- Python 3.11 or newer (we used 3.12) if you want to run the API or the notebooks.
+- OpenAI API key if you want to run the API locally or rerun the experiments that use OpenAI (embeddings `text-embedding-3-large`, spoilers and explanations `gpt-4o-mini`).
+- No GPU is needed for the extension and the API. Fine-tuning RoBERTa in `notebooks/8-BERT-Detection.ipynb` is much faster with a GPU.
 
 ## 1. Installation manual
 
+The API is deployed online at https://clickguard-api-82wk.onrender.com and the extension uses it by default, so you can install the extension and start using it right away, without running the API yourself. The server runs on a free tier, so the first request after a longer break can take a while (sometimes over a minute). If you want to run the API on your own machine, see [3. Running the API locally](#3-running-the-api-locally).
+
 To start using our app, one should follow the steps below.
 
-- Download the folder containing extension files. If it was downloaded as a zip, unpack it.
+- Download the `extension` folder from this repository. If it was downloaded as a zip, unpack it.
 - Open a Chromium-based browser (e.g. Google Chrome), click on the extensions icon <img src="docs/images/exticon.png" alt="extensions icon" height="16"> and go to *manage extensions* page. Alternatively, type `chrome://extensions` in the address bar.
 - Turn on developer mode using a switch in the upper right corner.
 
@@ -154,3 +188,163 @@ There are two configurations available. One for Google Search, and one for The S
   <img src="docs/images/options_preclick.png" alt="Pre-click settings panel" width="480"><br>
   <em>Figure 2.9: Pre-click settings panel</em>
 </p>
+
+## 3. Running the API locally
+
+You don't need this step to use the extension, because the API is already deployed online (see [1. Installation manual](#1-installation-manual)). Run it locally if the online version is not available or if you want to test changes in the backend.
+
+All commands below are run from the root of the repository.
+
+- Create and activate a virtual environment.
+
+  ```
+  python3 -m venv .venv
+  source .venv/bin/activate
+  ```
+
+  On Windows use `.venv\Scripts\activate` instead of the second command.
+
+- Install the requirements.
+
+  ```
+  cd api
+  pip install -r requirements.txt
+  ```
+
+- Create `.env` file in the `api` folder. You can copy `.env.example` and fill in your OpenAI API key.
+
+  ```
+  cp .env.example .env
+  ```
+
+- Start the service. It has to be started from the `api` folder, because the model and NLTK data are loaded from paths relative to it.
+
+  ```
+  python main.py
+  ```
+
+- The service will be running on http://localhost:8080. Opening it in the browser should show a simple page that confirms the API works.
+
+Required variables in `.env`:
+
+| Variable | Required | Description |
+|---|---|---|
+| `OPENAI_API_KEY` | yes | OpenAI API key, used for title embeddings, explanations and spoilers. |
+
+### Connecting the extension to the local API
+
+By default the extension sends requests to the online API. The address is saved in the extension storage when the extension is installed, so to switch to the local API:
+
+- Go to `chrome://extensions` and click *service worker* link on the ClickGuard tile. DevTools window will open.
+- In the *Console* tab run:
+
+  ```
+  chrome.storage.sync.set({proxyUrl: "http://127.0.0.1:8080"})
+  ```
+
+- To go back to the online API, run the same command with `https://clickguard-api-82wk.onrender.com`.
+
+Another option is to change `DEFAULT_PROXY_URL` in `extension/background.js` before loading the extension for the first time.
+
+## 4. Reproducing the results
+
+The notebooks are meant to be run from the `notebooks` folder, because they read data with relative paths like `../data/...`. Environments:
+
+- `environments/main_env.yaml` (conda) or `environments/main_requirements.txt` (pip) for most of the notebooks,
+- `environments/eda_env.yaml` for `2-EDA.ipynb` and `8.5-LLM-Spoiling.ipynb`,
+- `environments/infm_requirements.txt` for `3-Informativeness-Measures.ipynb`.
+
+Example for conda:
+
+```
+conda env create -f environments/main_env.yaml
+conda activate main_env
+cd notebooks
+jupyter notebook
+```
+
+All notebooks are saved with their outputs, so the results can be checked without running them again.
+
+### 4.1. Clickbait detection (Table 1)
+
+| Method | F1-score | Notebook |
+|---|---|---|
+| TF-IDF + Random Forest | 0.829 | `5-TFIDF_Traditional_ML_Models.ipynb` |
+| RoBERTa (fine-tuned) | 0.842 | `8-BERT-Detection.ipynb` |
+| OpenAI Embeddings + XGBoost | 0.864 | `7-LLM-OPENAI.ipynb` |
+| Hybrid XGBoost (deployed) | 0.909 | `7.5-LLM-OPENAI-Baitness-Measure.ipynb` |
+
+Notes:
+
+- All models are trained and evaluated on `data/merged_datasetes_balanced_huge.csv` (TF-IDF models also on its cleaned version `data/merged_datasetes_balanced_huge_cleaned.csv`).
+- `7-LLM-OPENAI.ipynb` gets title embeddings from OpenAI using batch mode. It needs `OPENAI_API_KEY` and saves request and result files to `request_files_openai/` in the root of the repository (create this folder before running). Batch requests can take up to 24 hours to finish.
+- `7.5-LLM-OPENAI-Baitness-Measure.ipynb` reads the embeddings created in the previous notebook, adds informativeness measures and trains the final models. The trained models are saved to `final_models/`. The XGBoost model from this folder is the one used in `api/models/`.
+- Fine-tuning RoBERTa without a GPU takes a lot of time.
+
+### 4.2. Latency (Figure 3)
+
+Latency was measured on the deployed version (free tier on Render) with the extension used normally in the browser. For every request two times are saved:
+
+- backend latency, measured in `api/main.py` around the request handler,
+- end-to-end latency, measured in the extension (`extension/content.js` for pre-click, `extension/popup.js` for post-click and spoilers) and sent to the `/latency` endpoint.
+
+Both are saved to the `TIME` table (columns `type`, `location`, `site`, `time` in milliseconds), in Turso if it is configured or in local `api/latency.db` otherwise. To collect your own measurements, run the API locally, connect the extension to it and use the extension on a few articles in pre-click, post-click and spoiler mode.
+
+### 4.3. Other experiments
+
+- `1-Getting-Data.ipynb` - getting data from multiple sources and transforming it to a common structure.
+- `2-EDA.ipynb`, `2.1-Creating_dataset_title_detection_balanced_cleaned.ipynb` - exploratory data analysis and creating the balanced dataset.
+- `2.5-Dummy-Classifier.ipynb` - baseline.
+- `3-Informativeness-Measures.ipynb` - informativeness measures and their analysis.
+- `4-TFIDF-Trivial.ipynb` - simple TF-IDF models on raw and cleaned data.
+- `6-Word-Embedding-Models.ipynb` - models based on pre-trained Word2Vec and GloVe embeddings.
+- `6.1-Comparison_SOTA.ipynb` - comparison with LLMs (Gemini).
+- `8.5-LLM-Spoiling.ipynb` - fine-tuning BERT for spoiling.
+- `9-OPENAI-Spoiling.ipynb` - spoiler generation with OpenAI models.
+
+## 5. Tests and timings
+
+To run unit tests, in the `api` folder run:
+
+```
+PYTHONPATH=. python -m unittest discover -s tests -p "test_*.py"
+```
+
+Some tests call OpenAI API, so `.env` with `OPENAI_API_KEY` is needed.
+
+To measure processing time of the backend on saved pages from `api/test_files`, in the `api` folder run:
+
+```
+pip install tqdm
+PYTHONPATH=. python tests/performance.py
+```
+
+The script runs post-click detection 20 times and saves the statistics (average, standard deviation, median, min and max) to `timings.txt`. Times depend on the machine and on OpenAI API response times, so they will differ from the ones in the paper.
+
+## 6. Data
+
+Datasets are in the `data` folder, files are UTF-8 encoded CSV and JSONL. Description of the main files is in `data/REDME_DATA.md`. Sources:
+
+- Webis Clickbait Corpus 2017: https://webis.de/data/webis-clickbait-17.html (`clickbait17-*` folders)
+- Webis Clickbait Spoiling Corpus 2022: https://webis.de/data/webis-clickbait-22.html (`spoiling-clickbait-22`)
+- Clickbait dataset from Kaggle: https://www.kaggle.com/datasets/amananandrai/clickbait-dataset (`clickbait_data.csv`)
+- News clickbait dataset from Kaggle: https://www.kaggle.com/datasets/vikassingh1996/news-clickbait-dataset (`train2.csv`)
+
+Other files were created by us from the datasets above (merged and balanced datasets, informativeness measures, OpenAI and Gemini batch files). The original datasets keep their own licenses, please check them on the linked pages.
+
+## License
+
+The code is released under the MIT License, see [LICENSE](LICENSE).
+
+## Citation
+
+If you use ClickGuard in your work, please cite:
+
+```
+@article{michaluk2026click,
+  title={Click it or Leave it: Detecting and Spoiling Clickbait with Informativeness Measures and Large Language Models},
+  author={Michaluk, Wojciech and Urban, Tymoteusz and Kubita, Mateusz and Kuntur, Soveatin and Wroblewska, Anna},
+  journal={arXiv preprint arXiv:2602.18171},
+  year={2026}
+}
+```

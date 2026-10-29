@@ -53,6 +53,13 @@ def test_postdetection():
     min_time = min(all_times)
     max_time = max(all_times)
 
-    print(f"avg: {round(mean_time, 3)}s, std: {round(std_time, 3)}s, median: {round(median_time, 3)}, min: {round(min_time, 3)}, max: {round(max_time, 3)}")
+    result = f"avg: {round(mean_time, 3)}s, std: {round(std_time, 3)}s, median: {round(median_time, 3)}, min: {round(min_time, 3)}, max: {round(max_time, 3)}"
+    print(result)
+
+    # save timings to a single text file
+    with open("timings.txt", "w") as file:
+        file.write("post-click detection, 20 runs\n")
+        file.write(result + "\n")
+        file.write("all times [s]: " + ", ".join(str(round(t, 3)) for t in all_times) + "\n")
 
 test_postdetection()
