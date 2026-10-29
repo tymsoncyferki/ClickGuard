@@ -11,5 +11,6 @@ In order to run it:
 
 Now ClickGuard will appear in the extensions popup. Go to any article, click on the extension icon and press "Check" button!
 
-If external API is not available anymore, you can set it up locally. For detailed instructions for running the API head to the api section. 
-To use the extension with local service, you need to change `PROXY_URL` constant in `background.js` file to local service URL. 
+By default the extension uses the API deployed online, so there is no need to run the API yourself.
+
+If external API is not available anymore, you can set it up locally. For detailed instructions for running the API and connecting the extension to it, see [Running the API locally](../README.md#3-running-the-api-locally) in the main README.

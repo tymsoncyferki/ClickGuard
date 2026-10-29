@@ -13,4 +13,11 @@ tensorflow
 keras_preprocessing
 gensim
 huggingface_hub
-ffspec
+fsspec
+openai==2.37.0
+python-dotenv==1.2.2
+tiktoken
+transformers
+torch
+contractions
+tabulate

@@ -16,8 +16,7 @@ Demo video: https://www.youtube.com/watch?v=ZoVK4trbrc4
 - [3. Running the API locally](#3-running-the-api-locally)
 - [4. Reproducing the results](#4-reproducing-the-results)
   - [4.1. Clickbait detection (Table 1)](#41-clickbait-detection-table-1)
-  - [4.2. Latency (Figure 3)](#42-latency-figure-3)
-  - [4.3. Other experiments](#43-other-experiments)
+  - [4.2. Other experiments](#42-other-experiments)
 - [5. Tests and timings](#5-tests-and-timings)
 - [6. Data](#6-data)
 - [License](#license)
@@ -29,7 +28,7 @@ Demo video: https://www.youtube.com/watch?v=ZoVK4trbrc4
 - `api/` - backend service written in Flask. It extracts article content, runs the clickbait model and generates spoilers and explanations with OpenAI API. Contains the deployed model (`api/models/`), NLTK data and tests.
 - `notebooks/` - Jupyter notebooks with data preparation, EDA, informativeness measures and all detection and spoiling experiments.
 - `final_models/` - trained models produced by the notebooks (Random Forest and XGBoost on OpenAI embeddings and informativeness measures). The XGBoost model is the one deployed in the API.
-- `data/` - datasets used for training and evaluation, together with OpenAI and Gemini batch inputs and outputs. Short description of the files is in `data/REDME_DATA.md`.
+- `data/` - datasets used for training and evaluation, together with OpenAI and Gemini batch inputs and outputs. Short description of the files is in `data/README_DATA.md`.
 - `environments/` - conda environments and pip requirements used to run the notebooks.
 - `docs/images/` - screenshots used in this README.
 
@@ -279,18 +278,10 @@ Notes:
 - All models are trained and evaluated on `data/merged_datasetes_balanced_huge.csv` (TF-IDF models also on its cleaned version `data/merged_datasetes_balanced_huge_cleaned.csv`).
 - `7-LLM-OPENAI.ipynb` gets title embeddings from OpenAI using batch mode. It needs `OPENAI_API_KEY` and saves request and result files to `request_files_openai/` in the root of the repository (create this folder before running). Batch requests can take up to 24 hours to finish.
 - `7.5-LLM-OPENAI-Baitness-Measure.ipynb` reads the embeddings created in the previous notebook, adds informativeness measures and trains the final models. The trained models are saved to `final_models/`. The XGBoost model from this folder is the one used in `api/models/`.
+- The embedding files we used in the paper (`request_files_openai/`) are not available, so to rerun notebooks 7 and 7.5 the embeddings have to be generated again with notebook 7. It costs less than 1 USD for the whole dataset. OpenAI embeddings are not fully deterministic, so the scores can be slightly different from the ones in the table. The notebooks are saved with their outputs and the trained models are in `final_models/`, so the reported results can also be checked without running anything.
 - Fine-tuning RoBERTa without a GPU takes a lot of time.
 
-### 4.2. Latency (Figure 3)
-
-Latency was measured on the deployed version (free tier on Render) with the extension used normally in the browser. For every request two times are saved:
-
-- backend latency, measured in `api/main.py` around the request handler,
-- end-to-end latency, measured in the extension (`extension/content.js` for pre-click, `extension/popup.js` for post-click and spoilers) and sent to the `/latency` endpoint.
-
-Both are saved to the `TIME` table (columns `type`, `location`, `site`, `time` in milliseconds), in Turso if it is configured or in local `api/latency.db` otherwise. To collect your own measurements, run the API locally, connect the extension to it and use the extension on a few articles in pre-click, post-click and spoiler mode.
-
-### 4.3. Other experiments
+### 4.2. Other experiments
 
 - `1-Getting-Data.ipynb` - getting data from multiple sources and transforming it to a common structure.
 - `2-EDA.ipynb`, `2.1-Creating_dataset_title_detection_balanced_cleaned.ipynb` - exploratory data analysis and creating the balanced dataset.
@@ -323,7 +314,7 @@ The script runs post-click detection 20 times and saves the statistics (average,
 
 ## 6. Data
 
-Datasets are in the `data` folder, files are UTF-8 encoded CSV and JSONL. Description of the main files is in `data/REDME_DATA.md`. Sources:
+Datasets are in the `data` folder, files are UTF-8 encoded CSV and JSONL. Description of the main files is in `data/README_DATA.md`. Sources:
 
 - Webis Clickbait Corpus 2017: https://webis.de/data/webis-clickbait-17.html (`clickbait17-*` folders)
 - Webis Clickbait Spoiling Corpus 2022: https://webis.de/data/webis-clickbait-22.html (`spoiling-clickbait-22`)
